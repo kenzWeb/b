@@ -3,6 +3,10 @@ from django.conf import settings
 from courses.models import Course
 
 class Enrollment(models.Model):
+    """
+    Модель записи студента на курс.
+    Хранит статус оплаты, дату записи, ID заказа и номер сертификата.
+    """
     STATUS_CHOICES = (
         ('pending', 'Ожидает оплаты'),
         ('success', 'Оплачено'),
@@ -17,4 +21,5 @@ class Enrollment(models.Model):
     certificate_number = models.CharField(max_length=12, blank=True, null=True, verbose_name="Номер сертификата")
 
     def __str__(self):
+        """Возвращает строковое представление записи (email студента - название курса)."""
         return f"{self.user.email} - {self.course.name}"

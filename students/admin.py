@@ -12,6 +12,11 @@ SERVICE_HOST = "http://mock-service-host"
 
 @admin.action(description='Распечатать сертификат')
 def print_certificate(modeladmin, request, queryset):
+    """
+    Действие админ-панели для печати сертификата.
+    Генерирует номер сертификата (если нет) и возвращает HTML страницу для печати.
+    Работает только для одной выбранной записи, оплаченной успешно.
+    """
     # This action deals with a queryset.
     # Usually for single print, we might select one.
     # If multiple selected, we could return a PDF with multiple pages or error.
@@ -66,15 +71,21 @@ def print_certificate(modeladmin, request, queryset):
     return HttpResponse(html_content)
 
 class EnrollmentAdmin(admin.ModelAdmin):
+    """
+    Административная панель для управления записями студентов.
+    Позволяет просматривать список записей, фильтровать по курсу и печатать сертификаты.
+    """
     list_display = ('get_user_email', 'get_user_name', 'course', 'date', 'status')
     list_filter = ('course',)
     actions = [print_certificate]
 
     def get_user_email(self, obj):
+        """Возвращает email пользователя."""
         return obj.user.email
     get_user_email.short_description = 'Email'
 
     def get_user_name(self, obj):
+        """Возвращает полное имя пользователя."""
         return f"{obj.user.first_name} {obj.user.last_name}"
     get_user_name.short_description = 'Имя'
 

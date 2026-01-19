@@ -1,3 +1,7 @@
+"""
+Маршрутизация API.
+Содержит пути для регистрации, авторизации, курсов, заказов и проверки сертификатов.
+"""
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (

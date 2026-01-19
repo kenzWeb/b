@@ -7,6 +7,10 @@ import re
 User = get_user_model()
 
 class RegistrationSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для регистрации пользователя.
+    Проверяет сложность пароля (буквы, цифры, спецсимволы).
+    """
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -14,6 +18,9 @@ class RegistrationSerializer(serializers.ModelSerializer):
         fields = ('email', 'password')
 
     def validate_password(self, value):
+        """
+        Валидация пароля на соответствие требованиям безопасности.
+        """
         if len(value) < 3:
             raise serializers.ValidationError("Password must be at least 3 characters long.")
         if not re.search(r'[a-z]', value):
@@ -27,6 +34,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
+        """Создание пользователя с хешированием пароля."""
         user = User.objects.create_user(
             username=validated_data['email'], # Use email as username
             email=validated_data['email'],
@@ -35,6 +43,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return user
 
 class CourseSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для курса.
+    Форматирует даты и возвращает абсолютный URL изображения.
+    """
     # Using specific formats if needed, usage of URLField for img
     img = serializers.SerializerMethodField()
     start_date = serializers.DateField(format="%d-%m-%Y")
@@ -45,12 +57,17 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'hours', 'img', 'start_date', 'end_date', 'price')
 
     def get_img(self, obj):
+        """Возвращает абсолютный путь к изображению."""
         request = self.context.get('request')
         if obj.img:
             return request.build_absolute_uri(obj.img.url)
         return None
 
 class LessonSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для урока.
+    Маппит поле text_content в description.
+    """
     description = serializers.CharField(source='text_content')
 
     class Meta:
@@ -58,11 +75,12 @@ class LessonSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'video_link', 'hours')
 
 class EnrollmentSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для записи (Enrollment).
+    Вкладывает сериализатор курса и возвращает статус оплаты.
+    """
     course = CourseSerializer()
-    payment_status = serializers.CharField(source='get_status_display') # Or just raw status? Spec says: "pending(ожидает оплаты) | success(оплачен)..." so maybe display value or just key. Example shows strings like "pending".
-    # Wait, Example view: "payment_status": "pending" (or readable?). "pending(ожидает оплаты)" suggests the example value might be the English key with description in parens in the prompt text.
-    # But usually APIs return machine readable keys. The example logic says: `payment_status: {pending...}`.
-    # The example Json shows: `"payment_status": "success"` (implied). I'll return the key for now.
+    payment_status = serializers.CharField(source='get_status_display') 
     
     class Meta:
         model = Enrollment

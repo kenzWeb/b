@@ -9,7 +9,6 @@ import uuid
 
 def course_image_path(instance, filename):
     ext = filename.split('.')[-1]
-    # "название файла должно начинаться с mpic* с сохранием формата"
     new_filename = f"mpic_{uuid.uuid4().hex[:8]}.{ext}"
     return os.path.join('courses/', new_filename)
 
@@ -42,38 +41,38 @@ class Course(models.Model):
         Валидация данных модели.
         Проверяет размер загружаемого изображения (не более 2 Мб).
         """
-        # Validate Image Size (max 2000 Kb = 2MB)
+        
         if self.img and self.img.file:
             try:
                 if self.img.size > 2 * 1024 * 1024:
                     raise ValidationError({'img': 'Размер файла не должен превышать 2000 Кб.'})
             except AttributeError:
-                pass # File might not be accessible during some partial saves or if not changed
+                pass 
 
     def save(self, *args, **kwargs):
         """
         Сохранение модели.
         Автоматически изменяет размер изображения до 300x300 px перед сохранением.
         """
-        # Resize image to max 300x300
+        
         if self.img:
-            # We open the image
+            
             try:
                 im = Image.open(self.img)
                 if im.height > 300 or im.width > 300:
                     output_size = (300, 300)
                     im.thumbnail(output_size)
                     
-                    # Save back to memory
+                    
                     buffer = BytesIO()
                     im.save(buffer, format='JPEG')
                     val = buffer.getvalue()
                     
-                    # We need to save the modified content to the file field
-                    # Use the same name
+                    
+                    
                     self.img.save(self.img.name, ContentFile(val), save=False)
             except Exception as e:
-                pass # proper error handling usually required
+                pass 
         
         super().save(*args, **kwargs)
 
@@ -109,13 +108,13 @@ class Lesson(models.Model):
         Валидация данных урока.
         Проверяет формат ссылки на видео и количество уроков в курсе (макс. 5).
         """
-        # Validate SuperTube link
+        
         if self.video_link:
             if 'super-tube.cc/video/' not in self.video_link:
                 raise ValidationError({'video_link': 'Ссылка должна быть на super-tube.cc/video/'})
         
-        # Check max 5 lessons per course
-        # Note: This check logic is tricky on CREATE. If pk is None, we check count.
+        
+        
         if not self.pk:
             if self.course.lessons.count() >= 5:
                 raise ValidationError("Курс не может содержать более 5 уроков.")
@@ -123,9 +122,9 @@ class Lesson(models.Model):
     def save(self, *args, **kwargs):
         """Сохранение урока с дополнительной проверкой количества."""
         if not self.pk:
-             # Re-check count race condition technically possible but unlikely in single admin user scenario
+             
              if self.course.lessons.count() >= 5:
-                 pass # Or raise error, but clean() is typically called before save in forms. 
+                 pass 
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):

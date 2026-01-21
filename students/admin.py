@@ -4,10 +4,10 @@ from django.urls import path, reverse
 from django.http import HttpResponse
 from .models import Enrollment
 import random
-import requests # Need to ensure requests is installed or use urllib, usually requests is standard or I should install. I'll assume standard library or requests available.
-# Actually I didn't install requests. I'll use urllib to be safe or install requests. I'll usage mock logic for now.
+import requests 
 
-# Mock service URL if not provided
+
+
 SERVICE_HOST = "http://mock-service-host" 
 
 @admin.action(description='Распечатать сертификат')
@@ -17,9 +17,9 @@ def print_certificate(modeladmin, request, queryset):
     Генерирует номер сертификата (если нет) и возвращает HTML страницу для печати.
     Работает только для одной выбранной записи, оплаченной успешно.
     """
-    # This action deals with a queryset.
-    # Usually for single print, we might select one.
-    # If multiple selected, we could return a PDF with multiple pages or error.
+    
+    
+    
     
     if queryset.count() != 1:
         modeladmin.message_user(request, "Пожалуйста, выберите ровно одну запись для печати сертификата.", level='error')
@@ -31,23 +31,23 @@ def print_certificate(modeladmin, request, queryset):
         modeladmin.message_user(request, "Сертификат можно распечатать только для оплаченных курсов.", level='error')
         return
 
-    # Generate Logic
+    
     if not enrollment.certificate_number:
-        # Call service
-        # Mocking the response: { "course_number": "xxxxxx" }
-        # mock_response = requests.post(...)
-        service_part = "ABCDEF" # Mocked
         
-        # Generate 6 digits, last is 1
-        # 5 random digits + '1'
+        
+        
+        service_part = "ABCDEF" 
+        
+        
+        
         random_part = "".join([str(random.randint(0, 9)) for _ in range(5)]) + "1"
         
         full_number = service_part + random_part
         enrollment.certificate_number = full_number
         enrollment.save()
     
-    # Return a printable view
-    # For simplicity, we return HTML directly here.
+    
+    
     html_content = f"""
     <html>
     <head>

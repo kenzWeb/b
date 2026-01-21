@@ -36,7 +36,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Создание пользователя с хешированием пароля."""
         user = User.objects.create_user(
-            username=validated_data['email'], # Use email as username
+            username=validated_data['email'], 
             email=validated_data['email'],
             password=validated_data['password']
         )
@@ -47,7 +47,7 @@ class CourseSerializer(serializers.ModelSerializer):
     Сериализатор для курса.
     Форматирует даты и возвращает абсолютный URL изображения.
     """
-    # Using specific formats if needed, usage of URLField for img
+    
     img = serializers.SerializerMethodField()
     start_date = serializers.DateField(format="%d-%m-%Y")
     end_date = serializers.DateField(format="%d-%m-%Y")
@@ -88,6 +88,6 @@ class EnrollmentSerializer(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        # Spec format for payment_status might be just the key
+        
         ret['payment_status'] = instance.status
         return ret

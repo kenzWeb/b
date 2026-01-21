@@ -22,10 +22,10 @@ class RegistrationView(views.APIView):
 
     def post(self, request):
         serializer = RegistrationSerializer(data=request.data)
-        # Note: default standard DRF exception handler returns 400 on validation error.
-        # If specific 422 is required, exception handler or explicit check needed.
-        # Criteria: "Status code and body registration corresponds to task".
-        # Assuming Validation Error fits criteria or managed by global handler.
+        
+        
+        
+        
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"success": True}, status=status.HTTP_201_CREATED)
@@ -43,7 +43,7 @@ class AuthView(views.APIView):
         password = request.data.get('password')
         
         if not email or not password:
-            # Custom validation error structure manual
+            
             return Response({
                 "message": "Invalid data",
                 "errors": {"email": ["Invalid data"]} 
@@ -74,7 +74,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         Получение детальной информации о курсе.
         Включает список уроков.
         """
-        # Override to return lessons
+        
         instance = self.get_object()
         lessons = instance.lessons.all()
         serializer = LessonSerializer(lessons, many=True)
@@ -90,12 +90,11 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         course = self.get_object()
         today = timezone.now().date()
         
-        # Validation: cannot buy if started or ended
-        # "нельзя записаться на курс, который уже начался или закончился"
+        
         if today >= course.start_date or today > course.end_date:
-            return Response({"message": "Course unavailable"}, status=400) # Spec doesn't define error code, 400 safe
+            return Response({"message": "Course unavailable"}, status=400) 
 
-        # Create Enrollment
+        
         order_id = uuid.uuid4().hex
         enrollment, created = Enrollment.objects.get_or_create(
             user=request.user,
@@ -103,11 +102,11 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             defaults={'order_id': order_id, 'status': 'pending'}
         )
         
-        # If already enrolled/paid?
+        
         if not created and enrollment.status == 'success':
              return Response({"message": "Already enrolled"}, status=400)
         
-        # If pending, we can update order_id or just return existing
+        
         if not created:
             enrollment.order_id = order_id
             enrollment.save()
@@ -124,7 +123,7 @@ class PaymentWebhookView(views.APIView):
 
     def post(self, request):
         order_id = request.data.get('order_id')
-        status_val = request.data.get('status') # 'success' | 'failed'
+        status_val = request.data.get('status') 
 
         try:
             enrollment = Enrollment.objects.get(order_id=order_id)
@@ -134,7 +133,7 @@ class PaymentWebhookView(views.APIView):
                 enrollment.status = 'failed'
             enrollment.save()
         except Enrollment.DoesNotExist:
-            pass # Spec: Status 204 regardless
+            pass 
         
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -149,8 +148,8 @@ class EnrollmentViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         return Enrollment.objects.filter(user=self.request.user)
 
-    # Spec: GET /orders (list)
-    # Spec: GET /orders/{id} (cancel)
+    
+    
     
     def list(self, request, *args, **kwargs):
         """
@@ -159,18 +158,15 @@ class EnrollmentViewSet(viewsets.ReadOnlyModelViewSet):
         """
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
-        return Response({"data": serializer.data}) # Spec wraps in "data"
+        return Response({"data": serializer.data}) 
 
     def retrieve(self, request, *args, **kwargs):
         """
         Отмена записи (по ID записи).
-        Если курс не оплачен, запись удаляется.
-        Если оплачен - 418 I'm a teapot (по заданию "Штраф 0,50 если можно отписаться от оплаченного курса" implied validation needed, and error 403 usually but code says 418?).
-        Wait, prompt says: "Ошибка 403 работает по заданию". 
-        So correct status should be 403, impossible to cancel paid course.
-        Current code uses 418. I should fix it to 403.
+        Если курс не оплачен (status='pending' или 'failed'), запись удаляется.
+        Если курс оплачен, возвращается ошибка 403.
         """
-        # Implement Cancel logic
+        
         try:
             instance = self.get_object()
             if instance.status in ['pending', 'failed']:
@@ -179,7 +175,7 @@ class EnrollmentViewSet(viewsets.ReadOnlyModelViewSet):
             else:
                  return Response({"error": "Can't cancel paid course"}, status=403)
         except Exception:
-             raise # Or 404
+             raise 
 
 class MyOrdersView(views.APIView):
     """
@@ -214,16 +210,16 @@ class CheckCertificateView(views.APIView):
     Представление для проверки сертификата.
     Публичный доступ.
     """
-    permission_classes = [permissions.AllowAny] # Presumed public or internal
+    permission_classes = [permissions.AllowAny] 
 
     def post(self, request):
-        # Body: { sertikate_number: ... }
-        # Note: Spec has typo "sertikate_number"
+        
+        
         cert_num = request.data.get('sertikate_number')
         if not cert_num:
              return Response({"status": "failed"}, status=200)
 
-        # Logic: Ends with 1 valid, 2 invalid
+        
         if cert_num.endswith('1'):
             return Response({"status": "success"})
         else:

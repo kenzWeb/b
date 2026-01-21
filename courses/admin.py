@@ -20,10 +20,10 @@ class CourseAdmin(admin.ModelAdmin):
     list_per_page = 5
     inlines = [LessonInline]
     
-    # Custom form validation styling is handled by Django Admin templates,
-    # but if "provided HTML template" meant a completely custom frontend for admin,
-    # then standard Django Admin might not be enough.
-    # Given I don't have the templates, I am configuring standard Admin.
+    
+    
+    
+    
 
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Lesson)

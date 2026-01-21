@@ -9,7 +9,7 @@ class CustomPagination(PageNumberPagination):
         return Response({
             'data': data,
             'pagination': {
-                'total': self.page.paginator.num_pages, # Spec: total pages. Or total count? "total": {всего_страниц}
+                'total': self.page.paginator.num_pages,
                 'current': self.page.number,
                 'per_page': self.page_size
             }

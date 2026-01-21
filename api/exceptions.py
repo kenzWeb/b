@@ -4,6 +4,10 @@ from rest_framework import status
 from rest_framework.response import Response
 
 def custom_exception_handler(exc, context):
+    """
+    Кастомный обработчик исключений.
+    Форматирует ошибки валидации (422) и доступа (403).
+    """
     response = exception_handler(exc, context)
 
     if isinstance(exc, ValidationError):
@@ -14,9 +18,6 @@ def custom_exception_handler(exc, context):
         return Response(data, status=422)
 
     if isinstance(exc, (PermissionDenied, NotAuthenticated)):
-        
-        �зации: Status code: 403".
-        
         return Response({"message": "Forbidden for you"}, status=403)
 
     return response

@@ -6,16 +6,11 @@ from .models import Enrollment
 import random
 import requests 
 
-
-
-SERVICE_HOST = "http://mock-service-host" 
+SERVICE_HOST = "http://test" 
 
 @admin.action(description='Распечатать сертификат')
 def print_certificate(modeladmin, request, queryset):
     """Действие админ-панели для печати сертификата"""
-    
-    
-    
     
     if queryset.count() != 1:
         modeladmin.message_user(request, "Пожалуйста, выберите ровно одну запись для печати сертификата.", level='error')
@@ -30,11 +25,7 @@ def print_certificate(modeladmin, request, queryset):
     
     if not enrollment.certificate_number:
         
-        
-        
         service_part = "ABCDEF" 
-        
-        
         
         random_part = "".join([str(random.randint(0, 9)) for _ in range(5)]) + "1"
         

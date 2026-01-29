@@ -13,7 +13,7 @@ import uuid
 import datetime
 
 class RegistrationView(views.APIView):
-    """Представление для регистрации пользователей"""
+    """регистрации пользователей"""
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
@@ -27,7 +27,7 @@ class RegistrationView(views.APIView):
         return Response({"success": True}, status=status.HTTP_201_CREATED)
 
 class AuthView(views.APIView):
-    """Представление для авторизации"""
+    """авторизации"""
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
@@ -133,7 +133,7 @@ class EnrollmentViewSet(viewsets.ReadOnlyModelViewSet):
         return Response({"data": serializer.data}) 
 
     def retrieve(self, request, *args, **kwargs):
-        """Отмена записи (по ID записи)"""
+        """Отмена записи"""
         
         try:
             instance = self.get_object()
@@ -141,12 +141,12 @@ class EnrollmentViewSet(viewsets.ReadOnlyModelViewSet):
                  instance.delete()
                  return Response({"status": "success"})
             else:
-                 return Response({"error": "Can't cancel paid course"}, status=403)
+                 return Response({"status": "was payed"}, status=418)
         except Exception:
              raise 
 
 class MyOrdersView(views.APIView):
-    """Представление для получения списка заказов (альтернативный путь)"""
+    """получения списка заказов"""
     permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request):
@@ -155,7 +155,7 @@ class MyOrdersView(views.APIView):
         return Response({"data": serializer.data})
 
 class CancelOrderView(views.APIView):
-    """Представление для отмены заказа"""
+    """отмены заказа"""
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, pk):
@@ -165,12 +165,12 @@ class CancelOrderView(views.APIView):
                 enrollment.delete()
                 return Response({"status": "success"})
             else:
-                return Response({"error": "Can't cancel paid course"}, status=403)
+                return Response({"status": "was payed"}, status=418)
         except Enrollment.DoesNotExist:
             return Response({"message": "Not found"}, status=404)
 
 class CheckCertificateView(views.APIView):
-    """Представление для проверки сертификата"""
+    """проверки сертификата"""
     permission_classes = [permissions.AllowAny] 
 
     def post(self, request):

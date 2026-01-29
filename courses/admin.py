@@ -12,11 +12,6 @@ class CourseAdmin(admin.ModelAdmin):
     list_display = ('name', 'description', 'hours', 'price', 'start_date', 'end_date')
     list_per_page = 5
     inlines = [LessonInline]
-    
-    
-    
-    
-    
 
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Lesson)

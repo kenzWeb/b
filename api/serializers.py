@@ -64,7 +64,7 @@ class LessonSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'video_link', 'hours')
 
 class EnrollmentSerializer(serializers.ModelSerializer):
-    """Сериализатор для записи (Enrollment)"""
+    """Сериализатор для записи"""
     course = CourseSerializer()
     payment_status = serializers.CharField(source='get_status_display') 
     

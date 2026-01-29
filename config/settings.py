@@ -12,23 +12,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-
-
-
-
 SECRET_KEY = 'django-insecure-=%u4k0u%omyh22w@k&2=q8@=ufqb1=6rq4eeeby%##9n49)n*h'
-
 
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -75,20 +65,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
-
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-
-
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -105,10 +87,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-
-
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -116,10 +94,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
-
-
-
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'static'
@@ -137,9 +111,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 5,
     'EXCEPTION_HANDLER': 'api.exceptions.custom_exception_handler',
 }
-
-
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

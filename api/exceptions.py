@@ -10,7 +10,7 @@ def custom_exception_handler(exc, context):
     if isinstance(exc, ValidationError):
         data = {
             "message": "Invalid fields",
-            "errors": response.data if response else {}
+            "errors": response.data
         }
         return Response(data, status=422)
 

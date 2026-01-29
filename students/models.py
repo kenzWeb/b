@@ -3,10 +3,7 @@ from django.conf import settings
 from courses.models import Course
 
 class Enrollment(models.Model):
-    """
-    Модель записи студента на курс.
-    Хранит статус оплаты, дату записи, ID заказа и номер сертификата.
-    """
+    """Модель записи студента на курс"""
     STATUS_CHOICES = (
         ('pending', 'Ожидает оплаты'),
         ('success', 'Оплачено'),

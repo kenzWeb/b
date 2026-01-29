@@ -4,10 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 def custom_exception_handler(exc, context):
-    """
-    Кастомный обработчик исключений.
-    Форматирует ошибки валидации (422) и доступа (403).
-    """
+    """Кастомный обработчик исключений"""
     response = exception_handler(exc, context)
 
     if isinstance(exc, ValidationError):

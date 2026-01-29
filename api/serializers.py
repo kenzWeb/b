@@ -7,10 +7,7 @@ import re
 User = get_user_model()
 
 class RegistrationSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для регистрации пользователя.
-    Проверяет сложность пароля (буквы, цифры, спецсимволы).
-    """
+    """Сериализатор для регистрации пользователя"""
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -18,9 +15,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         fields = ('email', 'password')
 
     def validate_password(self, value):
-        """
-        Валидация пароля на соответствие требованиям безопасности.
-        """
+        """Валидация пароля на соответствие требованиям безопасности"""
         if len(value) < 3:
             raise serializers.ValidationError("Password must be at least 3 characters long.")
         if not re.search(r'[a-z]', value):
@@ -43,10 +38,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return user
 
 class CourseSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для курса.
-    Форматирует даты и возвращает абсолютный URL изображения.
-    """
+    """Сериализатор для курса"""
     
     img = serializers.SerializerMethodField()
     start_date = serializers.DateField(format="%d-%m-%Y")
@@ -64,10 +56,7 @@ class CourseSerializer(serializers.ModelSerializer):
         return None
 
 class LessonSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для урока.
-    Маппит поле text_content в description.
-    """
+    """Сериализатор для урока"""
     description = serializers.CharField(source='text_content')
 
     class Meta:
@@ -75,10 +64,7 @@ class LessonSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'video_link', 'hours')
 
 class EnrollmentSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для записи (Enrollment).
-    Вкладывает сериализатор курса и возвращает статус оплаты.
-    """
+    """Сериализатор для записи (Enrollment)"""
     course = CourseSerializer()
     payment_status = serializers.CharField(source='get_status_display') 
     

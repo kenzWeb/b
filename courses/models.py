@@ -13,10 +13,7 @@ def course_image_path(instance, filename):
     return os.path.join('courses/', new_filename)
 
 class Course(models.Model):
-    """
-    Модель курса.
-    Содержит информацию о названии, описании, длительности, цене, датах и изображении.
-    """
+    """Модель курса"""
     name = models.CharField(max_length=30, verbose_name="Название курса")
     description = models.CharField(max_length=100, blank=True, verbose_name="Описание курса")
     hours = models.PositiveIntegerField(
@@ -37,10 +34,7 @@ class Course(models.Model):
     )
 
     def clean(self):
-        """
-        Валидация данных модели.
-        Проверяет размер загружаемого изображения (не более 2 Мб).
-        """
+        """Валидация данных модели"""
         
         if self.img and self.img.file:
             try:
@@ -50,10 +44,7 @@ class Course(models.Model):
                 pass 
 
     def save(self, *args, **kwargs):
-        """
-        Сохранение модели.
-        Автоматически изменяет размер изображения до 300x300 px перед сохранением.
-        """
+        """Сохранение модели"""
         
         if self.img:
             
@@ -77,10 +68,7 @@ class Course(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        """
-        Удаление курса.
-        Запрещает удаление, если на курс записаны студенты.
-        """
+        """Удаление курса"""
         if self.enrollments.exists():
             raise ValidationError("Нельзя удалить курс, на который записаны студенты.")
         super().delete(*args, **kwargs)
@@ -90,10 +78,7 @@ class Course(models.Model):
         return self.name
 
 class Lesson(models.Model):
-    """
-    Модель урока.
-    Связана с курсом. Содержит заголовок, текст, видеоссылку и длительность.
-    """
+    """Модель урока"""
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lessons')
     name = models.CharField(max_length=50, verbose_name="Заголовок")
     text_content = models.TextField(verbose_name="Текстовое содержание")
@@ -104,10 +89,7 @@ class Lesson(models.Model):
     )
 
     def clean(self):
-        """
-        Валидация данных урока.
-        Проверяет формат ссылки на видео и количество уроков в курсе (макс. 5).
-        """
+        """Валидация данных урока"""
         
         if self.video_link:
             if 'super-tube.cc/video/' not in self.video_link:
@@ -128,10 +110,7 @@ class Lesson(models.Model):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        """
-        Удаление урока.
-        Запрещает удаление, если на курс записаны студенты.
-        """
+        """Удаление урока"""
         if self.course.enrollments.exists():
             raise ValidationError("Нельзя удалить урок, если на курс записаны студенты.")
         super().delete(*args, **kwargs)

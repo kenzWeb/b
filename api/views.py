@@ -19,9 +19,6 @@ class RegistrationView(views.APIView):
     def post(self, request):
         serializer = RegistrationSerializer(data=request.data)
         
-        
-        
-        
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"success": True}, status=status.HTTP_201_CREATED)
@@ -71,11 +68,9 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         course = self.get_object()
         today = timezone.now().date()
         
-        
         if today >= course.start_date or today > course.end_date:
             return Response({"message": "Course unavailable"}, status=400) 
 
-        
         order_id = uuid.uuid4().hex
         enrollment, created = Enrollment.objects.get_or_create(
             user=request.user,
@@ -83,10 +78,8 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             defaults={'order_id': order_id, 'status': 'pending'}
         )
         
-        
         if not created and enrollment.status == 'success':
              return Response({"message": "Already enrolled"}, status=400)
-        
         
         if not created:
             enrollment.order_id = order_id

@@ -15,9 +15,7 @@ urlpatterns = [
     path('payment-webhook', PaymentWebhookView.as_view(), name='payment-webhook'),
     path('orders', MyOrdersView.as_view(), name='orders-list'),
     path('orders/<int:pk>', CancelOrderView.as_view(), name='orders-cancel'),
-    
-    
-    
+      
     path('check-sertificate', CheckCertificateView.as_view(), name='check-certificate'),
     path('', include(router.urls)),
 ]

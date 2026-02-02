@@ -117,8 +117,6 @@ class EnrollmentViewSet(viewsets.ReadOnlyModelViewSet):
         return Enrollment.objects.filter(user=self.request.user)
 
     
-    
-    
     def list(self, request, *args, **kwargs):
         """Получение списка записей"""
         queryset = self.filter_queryset(self.get_queryset())
@@ -167,8 +165,7 @@ class CheckCertificateView(views.APIView):
     permission_classes = [permissions.AllowAny] 
 
     def post(self, request):
-        
-        
+           
         cert_num = request.data.get('sertikate_number')
         if not cert_num:
              return Response({"status": "failed"}, status=200)

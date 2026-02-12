@@ -22,17 +22,13 @@ def print_certificate(modeladmin, request, queryset):
         modeladmin.message_user(request, "Сертификат можно распечатать только для оплаченных курсов.", level='error')
         return
 
-        # Mocking external service call to {service_host}/create-sertificate
-        # In real scenario: response = requests.post(f"{SERVICE_HOST}/create-sertificate", ...)
-        service_part = "123456" # Mocked response (6 chars)
-        
-        # 6 digits, last must be 1
-        random_part = "".join([str(random.randint(0, 9)) for _ in range(5)]) + "1"
-        
-        full_number = service_part + random_part
-        enrollment.certificate_number = full_number
-        enrollment.save()
+    service_part = "123456"
+    random_part = "".join([str(random.randint(0, 9)) for _ in range(5)]) + "1"
     
+    full_number = service_part + random_part
+    enrollment.certificate_number = full_number
+    enrollment.save()
+
     
     html_content = f"""
     <html>
